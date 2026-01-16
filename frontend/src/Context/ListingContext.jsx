@@ -1,7 +1,6 @@
-import React from 'react'
-import { createContext }from 'react'
+import React, { useEffect } from 'react'
+import { createContext, useContext } from 'react'
 import axios from 'axios'
-import { useContext } from 'react'
 import { authDataContext } from './AuthContext'
 import { useNavigate } from 'react-router-dom'
 
@@ -24,9 +23,10 @@ function ListingContext({children}) {
     let[landMark,setLandMark] = React.useState("")
     let[category,setCategory] = React.useState("")
     let [adding, setAdding] = React.useState(false)
+    let [listingData, setListingData] = React.useState([])
     let{serverUrl}= useContext(authDataContext)
 
-     
+    
     const handleAddListing = async () => {
         setAdding(true);
         try {
@@ -72,6 +72,8 @@ function ListingContext({children}) {
             
             if (result.status === 201) {
                 console.log("Listing created successfully", result.data);
+                // Refresh the listing data after successful creation
+                await getListing();
                 navigate("/");
             }
             setAdding(false);
@@ -89,32 +91,44 @@ function ListingContext({children}) {
         }
     }
 
+    const getListing = async () => {
+        try{
+            let result = await axios.get(`${serverUrl}/api/listing/get`, {
+                withCredentials: true
+            });
+            setListingData(result.data);
+            } catch(error) {
+                console.error("Get listing error:", error);
+            }
+        }
+    useEffect(() => {
+        getListing();
+    }, []);
 
     let value= {
-    title,setTitle,
-    description,setDescription,
-    frontEndImage1,setFrontEndImage1,
-    frontEndImage2,setFrontEndImage2,
-    frontEndImage3,setFrontEndImage3,
-    backEndImage1,setBackEndImage1,
-    backEndImage2,setBackEndImage2,
-    backEndImage3,setBackEndImage3,
-    rent,setRent,
-    city,setCity,
-    landMark,setLandMark,
-    category,setCategory,
-    handleAddListing,
-    adding,setAdding
-
-    }
+        title,setTitle,
+        description,setDescription,
+        frontEndImage1,setFrontEndImage1,
+        frontEndImage2,setFrontEndImage2,
+        frontEndImage3,setFrontEndImage3,
+        backEndImage1,setBackEndImage1,
+        backEndImage2,setBackEndImage2,
+        backEndImage3,setBackEndImage3,
+        rent,setRent,
+        city,setCity,
+        landMark,setLandMark,
+        category,setCategory,
+        handleAddListing,
+        adding,setAdding,
+        listingData,setListingData
+    };
   return (
     <div>
       <listingDataContext.Provider value={value}>
         {children}
       </listingDataContext.Provider>
-    
     </div>
-  )
+  );
 }
 
 export default ListingContext;

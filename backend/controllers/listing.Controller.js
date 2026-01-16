@@ -49,3 +49,11 @@ export const addListing = async (req, res) => {
         res.status(500).json({ message: `Error adding listing: ${error.message}` });
     }
 }
+export const getListing= async (req,res)=>{
+    try{
+        let listing = await Listing.find().sort({createdAt: -1})
+        res.status(200).json(listing)
+    } catch(error) {
+        res.status(500).json({ message: `Error fetching listings: ${error.message}` });
+    }
+}
