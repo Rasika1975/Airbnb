@@ -4,6 +4,7 @@ import axios from 'axios'
 import { authDataContext } from './AuthContext'
 import { useNavigate } from 'react-router-dom'
 
+
 export const listingDataContext = createContext()
 
 
@@ -26,6 +27,7 @@ function ListingContext({children}) {
     let [listingData, setListingData] = React.useState([])
     let[newListData, setNewListData] = React.useState([])
     let{serverUrl}= useContext(authDataContext)
+    let [cardDetails , setCardDetails] = React.useState(null)
 
     
     const handleAddListing = async () => {
@@ -91,6 +93,19 @@ function ListingContext({children}) {
             alert(error.response?.data?.message || "Failed to add listing");
         }
     }
+    const handleViewCard = async (id) => {
+        try {
+               let result = await axios.get(`${serverUrl}/api/listing/findlistingbyid/${id}`, {
+                withCredentials: true
+            })
+            console.log(result.data);
+           setCardDetails(result.data);
+            navigate("/viewcard");
+        }
+        catch (error) {
+            console.error("View card error:", error);
+        }
+    }
 
     const getListing = async () => {
         try{
@@ -123,14 +138,14 @@ function ListingContext({children}) {
         handleAddListing,
         adding,setAdding,
         listingData,setListingData,
-        newListData, setNewListData
+        newListData, setNewListData,
+        cardDetails, setCardDetails,
+        handleViewCard
     };
   return (
-    <div>
-      <listingDataContext.Provider value={value}>
-        {children}
-      </listingDataContext.Provider>
-    </div>
+    <listingDataContext.Provider value={value}>
+      {children}
+    </listingDataContext.Provider>
   );
 }
 

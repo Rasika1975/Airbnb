@@ -1,8 +1,34 @@
 import React from 'react'
+import { useContext } from 'react'
+import { userDataContext } from '../Context/UserContext'
+import { listingDataContext } from '../Context/ListingContext'
+import { useNavigate } from 'react-router-dom'
+
 
 function Card({title,landmark,image1,image2,image3,rent,id,city}) {
+  let navigate = useNavigate()
+  let {userData} = useContext(userDataContext)
+  let {handleViewCard} = useContext(listingDataContext)
+  const handleClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Card clicked, ID:', id, 'UserData:', userData);
+    
+    if(userData){
+      try {
+        await handleViewCard(id);
+      } catch (error) {
+        console.error('Error viewing card:', error);
+      }
+    } else {
+      console.log('Redirecting to login');
+      navigate('/login');
+    }
+  }
+  
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300" onClick={handleClick}>
       <div className="relative">
         {/* Main Image */}
         <div className="h-48 overflow-hidden">

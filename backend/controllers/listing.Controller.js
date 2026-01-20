@@ -57,3 +57,19 @@ export const getListing= async (req,res)=>{
         res.status(500).json({ message: `Error fetching listings: ${error.message}` });
     }
 }
+
+export const findListing= async (req,res)=>{
+    try{
+        let {id} = req.params;
+        let listing = await Listing.findById(id);
+        
+        if(!listing){
+            return res.status(404).json({ message: "Listing not found" });
+        }
+        
+        res.status(200).json(listing);
+       
+    } catch(error) {
+        res.status(500).json({ message: `Error fetching listing: ${error.message}` });
+    }
+}
