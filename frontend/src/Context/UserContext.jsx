@@ -33,9 +33,10 @@ function UserContext({ children }) {
         }
     };
 
-    useEffect(() => {
-        getCurrentUser();
-    }, [serverUrl]); // Re-run when serverUrl changes
+    // Don't auto-fetch user data on load
+    // Only fetch when explicitly needed (e.g., after login)
+    
+    // Optionally, you can call getCurrentUser() manually when needed
 
     const value = {
         userData,

@@ -8,7 +8,7 @@ import { authDataContext } from "../Context/AuthContext";
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   let {serverUrl} = useContext(authDataContext);
-  let {userData, setUserData} = useContext(userDataContext);
+  let {userData, setUserData, refreshUser} = useContext(userDataContext);
   let [email , setEmail] = useState("");
   let [password , setPassword] = useState("");
 
@@ -20,13 +20,12 @@ function Login() {
         email,
         password
       }, { withCredentials: true });
-      const returned = result.data.user || result.data;
-      setUserData({
-        username: returned.name || returned.username || (returned.email ? returned.email.split('@')[0] : ''),
-        email: returned.email,
-        id: returned.id || returned._id
-      });
+      
       console.log("Login successful:", result.data);
+      
+      // After successful login, fetch complete user data including listings
+      await refreshUser();
+      
       navigate("/");
     } catch (error) {
       console.log("error", error);

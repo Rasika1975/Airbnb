@@ -10,7 +10,7 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   let {serverUrl} = useContext(authDataContext);
-  let { userData, setUserData } = useContext(userDataContext);
+  let { userData, setUserData, refreshUser } = useContext(userDataContext);
   let [name , setName] = useState("");
   let [email , setEmail] = useState("");
   let [password , setPassword] = useState("");
@@ -23,14 +23,13 @@ function Signup() {
         email,
         password
       }, {withCredentials: true})
-      const returned = result.data.user || result.data;
-      setUserData({
-        username: returned.name || returned.username || (returned.email ? returned.email.split('@')[0] : ''),
-        email: returned.email,
-        id: returned.id || returned._id
-      });
-      navigate("/");
+      
       console.log("Signup successful:", result.data);
+      
+      // After successful signup, fetch complete user data including listings
+      await refreshUser();
+      
+      navigate("/");
   }
   catch (error) {
       console.error("Signup failed:", error);
