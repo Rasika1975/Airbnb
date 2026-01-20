@@ -13,11 +13,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { authDataContext } from '../Context/AuthContext'; 
 import { userDataContext } from '../Context/UserContext';
+import { listingDataContext } from '../Context/ListingContext';
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   let {serverUrl} = useContext(authDataContext);
+  let [cate, setCate] = useState("");
   let {userData, setUserData} = useContext(userDataContext);
+  let{listingData, setListingData, newListData, setNewListData} = useContext(listingDataContext)
+  
   const navigate = useNavigate();
 
   const categories = [
@@ -43,6 +47,28 @@ function Nav() {
       console.log("error", error);
     }
   
+  };
+  const handleCategory = (category) => {
+    setCate(category);
+    // Handle special case for 'Trending' - show all listings
+    if (category === 'Trending') {
+      // Reset to show all listings
+      if (newListData && newListData.length > 0) {
+        setNewListData(newListData);
+      } else if (listingData && listingData.length > 0) {
+        setNewListData(listingData);
+      }
+    } else {
+      // Filter listings by category
+      if (newListData && newListData.length > 0) {
+        const filteredListings = newListData.filter((list) => list.category === category);
+        setNewListData(filteredListings);
+      } else if (listingData && listingData.length > 0) {
+        // Fallback to original listingData if newListData is not available
+        const filteredListings = listingData.filter((list) => list.category === category);
+        setNewListData(filteredListings);
+      }
+    }
   };
 
   return (
@@ -128,7 +154,8 @@ function Nav() {
         {categories.map((cat) => (
           <div
             key={cat.label}
-            className="flex flex-col items-center gap-2 cursor-pointer opacity-70 hover:opacity-100 hover:border-b-2 hover:border-gray-500 transition min-w-fit pb-2"
+            onClick={() => handleCategory(cat.label)}
+            className={`flex flex-col items-center gap-2 cursor-pointer ${cate === cat.label || (cat.label === 'Trending' && cate === '') ? 'opacity-100 border-b-2 border-gray-500' : 'opacity-70 hover:opacity-100 hover:border-b-2 hover:border-gray-500'} transition min-w-fit pb-2`}
           >
             <span className="text-2xl text-gray-600">{cat.icon}</span>
             <span className="text-xs font-medium text-gray-600">

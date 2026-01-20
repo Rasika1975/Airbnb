@@ -24,6 +24,7 @@ function ListingContext({children}) {
     let[category,setCategory] = React.useState("")
     let [adding, setAdding] = React.useState(false)
     let [listingData, setListingData] = React.useState([])
+    let[newListData, setNewListData] = React.useState([])
     let{serverUrl}= useContext(authDataContext)
 
     
@@ -97,6 +98,7 @@ function ListingContext({children}) {
                 withCredentials: true
             });
             setListingData(result.data);
+            setNewListData(result.data);
             } catch(error) {
                 console.error("Get listing error:", error);
             }
@@ -120,7 +122,8 @@ function ListingContext({children}) {
         category,setCategory,
         handleAddListing,
         adding,setAdding,
-        listingData,setListingData
+        listingData,setListingData,
+        newListData, setNewListData
     };
   return (
     <div>

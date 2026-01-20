@@ -4,7 +4,7 @@ import Card from '../components/Card'
 import { listingDataContext } from '../Context/ListingContext'
 
 function Home() {
-  let { listingData, setListingData } = useContext(listingDataContext)
+  let { listingData, setListingData , newListData } = useContext(listingDataContext)
   return (
     <div >
       <Nav />
@@ -13,7 +13,7 @@ function Home() {
          <h1 className="text-3xl font-bold text-gray-800 mb-8">Discover Places Around the World</h1>
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
            {listingData && listingData.length > 0 ? (
-             listingData.map((list) => (
+             newListData.map((list) => (
                <Card 
                  key={list._id}
                  title={list.title} 
