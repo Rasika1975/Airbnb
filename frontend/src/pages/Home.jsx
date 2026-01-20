@@ -8,10 +8,10 @@ function Home() {
   return (
     <div >
       <Nav />
-      <div className ='w-[100vh] h-[77vh]'>
-       <div className="container mx-auto px-4 py-8">
+      <div className ='w-full min-h-screen pb-10'>
+       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
          <h1 className="text-3xl font-bold text-gray-800 mb-8">Discover Places Around the World</h1>
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
            {listingData && listingData.length > 0 ? (
              newListData.map((list) => (
                <Card 

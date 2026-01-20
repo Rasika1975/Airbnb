@@ -10,8 +10,8 @@ function MyListing() {
   return (
     <div>
       <Nav />
-      <div className="w-[100vh] min-h-[77vh]">
-        <div className="container mx-auto px-4 py-8">
+      <div className="w-full min-h-screen pb-10">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">My Listings</h1>
           <p className="text-gray-600 mb-8">
             These are the properties you have added.
@@ -21,7 +21,7 @@ function MyListing() {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#FF385C]"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {myListings.length > 0 ? (
                 myListings.map((list) => (
                   <Card
@@ -51,4 +51,3 @@ function MyListing() {
 }
 
 export default MyListing;
-
