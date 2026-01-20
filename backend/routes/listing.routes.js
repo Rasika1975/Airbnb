@@ -1,5 +1,5 @@
 import express from 'express';
-import { addListing, getListing, findListing, updateListing } from '../controllers/listing.Controller.js';
+import { addListing, getListing, findListing, updateListing, deleteListing } from '../controllers/listing.Controller.js';
 import isAuth from '../middlewares/isAuth.js';
 import upload from '../middlewares/multer.js';
  
@@ -11,5 +11,6 @@ listingRouter.get('/get', getListing);
 listingRouter.get('/findlistingbyid/:id',isAuth, findListing);
 
 listingRouter.put('/update/:id', isAuth, upload.fields([{ name: 'image1', maxCount: 1 }, { name: 'image2', maxCount: 1 }, { name: 'image3', maxCount: 1 }]), updateListing);
+listingRouter.delete('/delete/:id', isAuth, deleteListing);
 
 export default listingRouter;

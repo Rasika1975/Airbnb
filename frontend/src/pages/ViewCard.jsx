@@ -4,6 +4,7 @@ import { FaArrowLeft } from "react-icons/fa"
 import { listingDataContext } from '../Context/ListingContext'
 import { userDataContext } from '../Context/UserContext'
 import { RxCross1 } from "react-icons/rx";
+import axios from 'axios';
 
 function ViewCard() {
     let navigate = useNavigate()
@@ -13,8 +14,11 @@ function ViewCard() {
           rent, setRent,
           city, setCity,
           landMark, setLandMark,
+          backEndImage1,
           setBackEndImage1, setFrontEndImage1,
+          backEndImage2,
           setBackEndImage2, setFrontEndImage2,
+          backEndImage3,
           setBackEndImage3, setFrontEndImage3,
     } = useContext(listingDataContext)
     let { userData } = useContext(userDataContext)
@@ -46,11 +50,43 @@ function ViewCard() {
       setFrontEndImage3(URL.createObjectURL(file));
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
       e.preventDefault();
-      // Add your update logic here
-      console.log("Updating listing...");
-      setUpdatepopup(false);
+      
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("rent", rent);
+      formData.append("city", city);
+      formData.append("landmark", landMark);
+      formData.append("category", cardDetails?.category || "Apartment");
+
+      if (backEndImage1) formData.append("image1", backEndImage1);
+      if (backEndImage2) formData.append("image2", backEndImage2);
+      if (backEndImage3) formData.append("image3", backEndImage3);
+
+      try {
+        await axios.put(`http://localhost:8000/api/listing/update/${cardDetails._id}`, formData, {
+          withCredentials: true,
+        });
+        setUpdatepopup(false);
+        navigate(0); // Refresh page to show changes
+      } catch (error) {
+        console.error("Error updating listing:", error);
+      }
+    }
+
+    const handleDelete = async () => {
+      if (window.confirm("Are you sure you want to delete this listing?")) {
+        try {
+          await axios.delete(`http://localhost:8000/api/listing/delete/${cardDetails._id}`, {
+            withCredentials: true,
+          });
+          navigate("/");
+        } catch (error) {
+          console.error("Error deleting listing:", error);
+        }
+      }
     }
 
   return (
@@ -104,11 +140,16 @@ function ViewCard() {
           </div>
   
           {/* Button */}
-          <div className="mt-auto pt-8 flex justify-end">
+          <div className="mt-auto pt-8 flex justify-end gap-4">
             {cardDetails?.host === userData?._id ? (
-              <button className="bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-gray-900 cursor-pointer" onClick={() => setUpdatepopup(true)}>
-                Edit Listing
-              </button>
+              <>
+                <button className="bg-red-500 text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-red-600 cursor-pointer" onClick={handleDelete}>
+                  Delete
+                </button>
+                <button className="bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-gray-900 cursor-pointer" onClick={() => setUpdatepopup(true)}>
+                  Edit Listing
+                </button>
+              </>
             ) : (
               <button className="bg-[#FF385C] text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-red-600 cursor-pointer">
                 Book Now

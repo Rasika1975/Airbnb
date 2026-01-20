@@ -90,27 +90,26 @@ export const updateListing= async (req,res)=>{
             return res.status(400).json({ message: "All required fields must be provided" });
         }
         
-        // Check if files exist
-        if (!req.files || !req.files.image1 || !req.files.image2 || !req.files.image3) {
-            return res.status(400).json({ message: "All three images are required" });
-        }
-        
-        let image1Result = await uploadOnCloudinary(req.files.image1[0].path);
-        let image2Result = await uploadOnCloudinary(req.files.image2[0].path);
-        let image3Result = await uploadOnCloudinary(req.files.image3[0].path);
+        let updateData = {
+            title, description, rent, city, landmark, category, host
+        };
 
-        let listing = await Listing.findByIdAndUpdate(id, {
-            title,
-             description,
-             rent,
-             city,
-             landmark,
-             category,
-            image1: image1Result?.url || "",
-            image2: image2Result?.url || "",
-            image3: image3Result?.url || "",
-            host,
-        },{new: true});
+        if (req.files) {
+            if (req.files.image1) {
+                let image1Result = await uploadOnCloudinary(req.files.image1[0].path);
+                if (image1Result?.url) updateData.image1 = image1Result.url;
+            }
+            if (req.files.image2) {
+                let image2Result = await uploadOnCloudinary(req.files.image2[0].path);
+                if (image2Result?.url) updateData.image2 = image2Result.url;
+            }
+            if (req.files.image3) {
+                let image3Result = await uploadOnCloudinary(req.files.image3[0].path);
+                if (image3Result?.url) updateData.image3 = image3Result.url;
+            }
+        }
+
+        let listing = await Listing.findByIdAndUpdate(id, updateData, {new: true});
         
        
         return res.status(201).json(listing);
@@ -118,5 +117,28 @@ export const updateListing= async (req,res)=>{
     }
     catch (error) {
         res.status(500).json({ message: `Error updating listing: ${error.message}` });
+    }
+}
+
+export const deleteListing = async (req, res) => {
+    try {
+        let { id } = req.params;
+        let host = req.userId;
+
+        const listing = await Listing.findById(id);
+        if (!listing) {
+            return res.status(404).json({ message: "Listing not found" });
+        }
+
+        if (listing.host.toString() !== host) {
+            return res.status(403).json({ message: "Unauthorized: You can only delete your own listings" });
+        }
+
+        await Listing.findByIdAndDelete(id);
+        await User.findByIdAndUpdate(host, { $pull: { listing: id } });
+
+        return res.status(200).json({ message: "Listing deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: `Error deleting listing: ${error.message}` });
     }
 }
