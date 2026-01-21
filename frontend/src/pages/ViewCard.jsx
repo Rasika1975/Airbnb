@@ -5,6 +5,7 @@ import { listingDataContext } from '../Context/ListingContext'
 import { userDataContext } from '../Context/UserContext'
 import { RxCross1 } from "react-icons/rx";
 import axios from 'axios';
+import { bookingDataContext } from '../Context/BookingContext';
 
 function ViewCard() {
     let navigate = useNavigate()
@@ -23,6 +24,11 @@ function ViewCard() {
     } = useContext(listingDataContext)
     let { userData } = useContext(userDataContext)
     const [updatepopup, setUpdatepopup] = useState(false)
+    const [bookPopup, setBookPopup] = useState(false)
+    const [checkIn, setCheckIn] = useState("")
+    const [checkOut, setCheckOut] = useState("")
+    const [totalPrice, setTotalPrice] = useState(0)
+    let {handleBooking} = useContext(bookingDataContext)
 
     useEffect(() => {
       if (updatepopup && cardDetails) {
@@ -33,6 +39,20 @@ function ViewCard() {
         setLandMark(cardDetails.landmark || "");
       }
     }, [updatepopup, cardDetails, setTitle, setDescription, setRent, setCity, setLandMark]);
+
+    useEffect(() => {
+      if (checkIn && checkOut && cardDetails?.rent) {
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        if (start < end) {
+          const diffTime = Math.abs(end - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          setTotalPrice(diffDays * cardDetails.rent);
+        } else {
+          setTotalPrice(0);
+        }
+      }
+    }, [checkIn, checkOut, cardDetails]);
 
     const handleImage1 = (e) => {
       let file = e.target.files[0];
@@ -73,6 +93,29 @@ function ViewCard() {
         navigate(0); // Refresh page to show changes
       } catch (error) {
         console.error("Error updating listing:", error);
+      }
+    }
+
+    const handleBook = async (e) => {
+      e.preventDefault();
+      if (!userData) {
+        alert("Please login to book");
+        navigate("/login");
+        return;
+      }
+      
+      try {
+        await handleBooking(cardDetails._id, {
+          checkIn,
+          checkOut,
+          totalRent: totalPrice
+        });
+        
+        alert("Booking successful!");
+        setBookPopup(false);
+      } catch (error) {
+        console.error("Booking error:", error);
+        alert(error.response?.data?.message || "Booking failed");
       }
     }
 
@@ -151,7 +194,7 @@ function ViewCard() {
                 </button>
               </>
             ) : (
-              <button className="bg-[#FF385C] text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-red-600 cursor-pointer">
+              <button className="bg-[#FF385C] text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-red-600 cursor-pointer" onClick={() => setBookPopup(true)}>
                 Book Now
               </button>
             )}
@@ -279,6 +322,67 @@ function ViewCard() {
                         className="bg-[#FF385C] hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg transition duration-200 shadow-md"
                       >
                         Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Booking Popup */}
+          {bookPopup && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+              <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-fadeIn">
+                
+                {/* Close Button */}
+                <button 
+                  onClick={() => setBookPopup(false)}
+                  className="absolute top-4 right-4 p-2 text-gray-500 hover:bg-gray-100 rounded-full transition z-10"
+                >
+                  <RxCross1 size={24} />
+                </button>
+
+                <div className="p-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Book your stay</h2>
+                  <p className="text-gray-500 text-sm mb-6">Select your dates for {cardDetails?.title}</p>
+                  
+                  <form className="space-y-6" onSubmit={handleBook}>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Check-in</label>
+                      <input
+                        type="date"
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent outline-none transition"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Check-out</label>
+                      <input
+                        type="date"
+                        value={checkOut}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent outline-none transition"
+                      />
+                    </div>
+
+                    {totalPrice > 0 && (
+                      <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                        <span className="font-semibold text-gray-700">Total Price:</span>
+                        <span className="text-xl font-bold text-[#FF385C]">₹{totalPrice}</span>
+                      </div>
+                    )}
+
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        className="w-full bg-[#FF385C] hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md" 
+                      >
+                        Confirm Booking
                       </button>
                     </div>
                   </form>
