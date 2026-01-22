@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import Nav from "../components/Nav";
 import { userDataContext } from "../Context/UserContext";
 import { Link } from "react-router-dom";
 import {useNavigate } from 'react-router-dom'
+import { FaArrowLeft } from "react-icons/fa";
 
 function MyBooking() {
   let navigate = useNavigate()
@@ -18,9 +18,16 @@ function MyBooking() {
 
   return (
     <div>
-      <Nav />
       <div className="w-full min-h-screen pb-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div
+            onClick={() => navigate("/")}
+            className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-600 
+                       flex items-center justify-center rounded-full 
+                       cursor-pointer transition mb-6"
+          >
+            <FaArrowLeft size={16} />
+          </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">My Bookings</h1>
           <p className="text-gray-600 mb-8">
             These are the properties you have booked.
