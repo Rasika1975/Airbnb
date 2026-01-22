@@ -113,6 +113,7 @@ function ViewCard() {
         
         alert("Booking successful!");
         setBookPopup(false);
+        navigate("/");
       } catch (error) {
         console.error("Booking error:", error);
         alert(error.response?.data?.message || "Booking failed");
@@ -193,6 +194,10 @@ function ViewCard() {
                   Edit Listing
                 </button>
               </>
+            ) : cardDetails?.isBooked ? (
+              <button className="bg-gray-400 text-white font-bold py-3 px-8 rounded-lg cursor-not-allowed" disabled>
+                Booked
+              </button>
             ) : (
               <button className="bg-[#FF385C] text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-red-600 cursor-pointer" onClick={() => setBookPopup(true)}>
                 Book Now

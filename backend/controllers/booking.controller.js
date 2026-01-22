@@ -15,6 +15,9 @@ export const createBooking = async (req, res) => {
         if(!listing){
             return res.status(404).json({ message: "Listing not found" });
         }
+        if(listing.isBooked){
+            return res.status(400).json({ message: "This listing is already booked" });
+        }
         if(new Date(checkIn) >= new Date(checkOut)){
             return res.status(400).json({ message: "Check-in date must be before check-out date" });
         }
@@ -30,12 +33,17 @@ export const createBooking = async (req, res) => {
             guest: req.userId
         });
         
+        listing.isBooked = true;
+        await listing.save();
+        
         // Add booking ID to user's bookings
         let user = await User.findByIdAndUpdate(req.userId, { $push: { bookings: newBooking._id } }, { new: true });
         
         if(!user){
             return res.status(404).json({ message: "User not found" });
         }
+
+        await newBooking.populate("listing");
         
         return res.status(201).json({ message: "Booking created successfully", booking: newBooking });
     } catch (error) {

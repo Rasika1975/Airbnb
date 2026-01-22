@@ -138,7 +138,15 @@ function Nav() {
                       >
                         My listing
                       </span>
-                      <span className="px-4 py-3 hover:bg-gray-100">Check booking</span>
+                      <span 
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer" 
+                        onClick={() => {
+                          setIsOpen(false);
+                          navigate("/mybooking");
+                        }}
+                      >
+                        My booking
+                      </span>
                     </>
                   ) : (
                     <>

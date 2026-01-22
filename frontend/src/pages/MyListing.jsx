@@ -35,6 +35,8 @@ function MyListing() {
                     rent={list.rent}
                     id={list._id}
                     hostId={list.host}
+                    isBooked={list.isBooked}
+                    host={list.host}
                   />
                 ))
               ) : (

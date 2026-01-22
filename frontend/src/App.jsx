@@ -8,6 +8,7 @@ import ListingPage2 from './pages/ListingPage2.jsx'
 import ListingPage3 from './pages/ListingPage3.jsx'
 import MyListing from './pages/MyListing.jsx'
 import ViewCard from './pages/ViewCard.jsx'
+import MyBooking from './pages/MyBooking.jsx'
 
 import { userDataContext } from './Context/UserContext'
 
@@ -26,6 +27,7 @@ function App() {
          <Route path='/listingpage3' element={userData != null ?<ListingPage3 /> :<Navigate to ={"/"}/>}/> 
          <Route path='/mylisting' element={userData != null ?<MyListing /> :<Navigate to ={"/"}/>}/> 
          <Route path='/viewcard' element={userData != null ?<ViewCard /> :<Navigate to ={"/"}/>}/> 
+         <Route path='/mybooking' element={userData != null ?<MyBooking /> :<Navigate to ={"/"}/>}/> 
       </Routes>
     </>
   )

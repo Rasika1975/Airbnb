@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 
-function Card({title,landmark,image1,image2,image3,rent,id,city}) {
+function Card({title,landmark,image1,image2,image3,rent,id,city, isBooked, host }) {
   let navigate = useNavigate()
   let {userData} = useContext(userDataContext)
   let {handleViewCard} = useContext(listingDataContext)
@@ -45,6 +45,11 @@ function Card({title,landmark,image1,image2,image3,rent,id,city}) {
   return (
     <div className="group flex flex-col gap-2 w-full cursor-pointer" onClick={handleClick}>
       <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-200">
+        {isBooked && (
+          <div className="absolute top-3 left-3 z-10 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded">
+            Booked
+          </div>
+        )}
         {/* Main Image */}
         <img 
           src={images.length > 0 ? images[currentImageIndex] : ""} 
