@@ -179,7 +179,7 @@ function ViewCard() {
             <p className="text-gray-600">{cardDetails?.description}</p>
             <div className="flex gap-4 text-sm text-gray-500 pt-2">
               <span>Category: {cardDetails?.category}</span>
-              <span>Rent: ₹{cardDetails?.rent}</span>
+              <span>Rent: ₹{cardDetails?.rent} / day</span>
             </div>
           </div>
   

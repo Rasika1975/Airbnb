@@ -66,7 +66,7 @@ function ListingPage3() {
           <p className="text-gray-600">{description}</p>
           <div className="flex gap-4 text-sm text-gray-500 pt-2">
             <span>Category: {category}</span>
-            <span>Rent: ₹{rent}</span>
+            <span>Rent: ₹{rent} / day</span>
           </div>
         </div>
 

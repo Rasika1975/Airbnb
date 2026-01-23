@@ -105,7 +105,7 @@ function Card({title,landmark,image1,image2,image3,rent,id,city, isBooked, host 
         </p>
         <div className="mt-1 flex items-baseline gap-1">
           <span className="font-semibold text-gray-900">₹{rent}</span>
-          <span className="text-gray-900 text-sm"> night</span>
+          <span className="text-gray-900 text-sm"> / day</span>
         </div>
       </div>
     </div>

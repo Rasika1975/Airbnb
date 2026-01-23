@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react'
 import axios from 'axios'
 import { authDataContext } from './AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { userDataContext } from './UserContext'
 
 
 export const listingDataContext = createContext()
@@ -28,6 +29,7 @@ function ListingContext({children}) {
     let[newListData, setNewListData] = React.useState([])
     let{serverUrl}= useContext(authDataContext)
     let [cardDetails , setCardDetails] = React.useState(null)
+    let { refreshUser } = useContext(userDataContext)
 
     
     const handleAddListing = async () => {
@@ -77,6 +79,7 @@ function ListingContext({children}) {
                 console.log("Listing created successfully", result.data);
                 // Refresh the listing data after successful creation
                 await getListing();
+                if (refreshUser) await refreshUser();
                 navigate("/");
             }
             setAdding(false);
