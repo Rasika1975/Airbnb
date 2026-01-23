@@ -11,17 +11,18 @@ import { GiWoodCabin } from "react-icons/gi";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { authDataContext } from '../Context/AuthContext'; 
+import { authDataContext } from '../Context/AuthContext';
 import { userDataContext } from '../Context/UserContext';
 import { listingDataContext } from '../Context/ListingContext';
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-  let {serverUrl} = useContext(authDataContext);
+  let { serverUrl } = useContext(authDataContext);
   let [cate, setCate] = useState("");
-  let {userData, setUserData} = useContext(userDataContext);
-  let{listingData, setListingData, newListData, setNewListData} = useContext(listingDataContext)
-  
+  let { userData, setUserData } = useContext(userDataContext);
+  const [search, setSearch] = useState("");
+  let { listingData, setListingData, newListData, setNewListData } = useContext(listingDataContext)
+
   const navigate = useNavigate();
 
   const categories = [
@@ -38,7 +39,7 @@ function Nav() {
 
   const handleLogout = async () => {
     try {
-      let result = await axios.post(`${serverUrl}/api/auth/logout`, {}, {withCredentials: true});
+      let result = await axios.post(`${serverUrl}/api/auth/logout`, {}, { withCredentials: true });
       setUserData(null);
       setIsOpen(false);
       navigate("/");
@@ -46,7 +47,7 @@ function Nav() {
     catch (error) {
       console.log("error", error);
     }
-  
+
   };
   const handleCategory = (category) => {
     setCate(category);
@@ -57,6 +58,19 @@ function Nav() {
       // Filter listings by category
       const filteredListings = listingData.filter((list) => list.category === category);
       setNewListData(filteredListings);
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      if (search.trim() === "") {
+        setNewListData(listingData);
+      } else {
+        const result = await axios.get(`${serverUrl}/api/listing/search?q=${search}`);
+        setNewListData(result.data);
+      }
+    } catch (error) {
+      console.log("Search error", error);
     }
   };
 
@@ -73,20 +87,27 @@ function Nav() {
 
         {/* CENTER - SEARCH BAR */}
         <div className="hidden md:flex items-center border rounded-full shadow-sm px-4 py-2 hover:shadow-md transition">
-          <span className="px-3 text-sm font-medium">Anywhere</span>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            placeholder="Anywhere"
+            className="px-3 text-sm font-medium outline-none bg-transparent w-full md:w-auto placeholder-gray-900"
+          />
           <span className="h-5 w-[1px] bg-gray-300"></span>
           <span className="px-3 text-sm font-medium">Any week</span>
           <span className="h-5 w-[1px] bg-gray-300"></span>
           <span className="px-3 text-sm text-gray-500">Add guests</span>
 
-          <button className="ml-2 bg-rose-500 text-white p-2 rounded-full">
+          <button onClick={handleSearch} className="ml-2 bg-rose-500 text-white p-2 rounded-full">
             <IoSearch />
           </button>
         </div>
 
         {/* RIGHT - USER MENU */}
         <div className="flex items-center gap-4">
-          <span 
+          <span
             onClick={() => navigate("/listingpage1")}
             className="hidden md:block text-sm font-medium cursor-pointer hover:bg-gray-100 px-4 py-2 rounded-full"
           >
@@ -118,8 +139,8 @@ function Nav() {
                       </span>
                       <hr />
                       <span onClick={() => navigate("/listingpage1")} className="px-4 py-3 hover:bg-gray-100">List your home</span>
-                      <span 
-                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer" 
+                      <span
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
                         onClick={() => {
                           setIsOpen(false);
                           navigate("/mylisting");
@@ -127,8 +148,8 @@ function Nav() {
                       >
                         My listing
                       </span>
-                      <span 
-                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer" 
+                      <span
+                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
                         onClick={() => {
                           setIsOpen(false);
                           navigate("/mybooking");
