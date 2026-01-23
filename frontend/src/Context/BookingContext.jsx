@@ -32,6 +32,19 @@ export default function BookingContext({children}) {
             throw error;
         }
     }
+    const cancelBooking = async (id) => {
+        try{
+             const result = await axios.delete(`${serverUrl}/api/booking/cancel/${id}`, {withCredentials:true});
+            
+            await refreshUser();
+            await getListing()
+            console.log(result.data)
+            return result.data;
+        }catch(error){
+            console.log(error)
+            throw error;
+        }
+    }
 
     let value ={
         checkIn,setCheckIn
@@ -39,7 +52,7 @@ export default function BookingContext({children}) {
         ,total,setTotal
         ,nights,setNights
         ,bookingData,setBookingData
-        ,handleBooking
+        ,handleBooking,cancelBooking
     }
     
     return (

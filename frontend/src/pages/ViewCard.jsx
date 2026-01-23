@@ -28,7 +28,7 @@ function ViewCard() {
     const [checkIn, setCheckIn] = useState("")
     const [checkOut, setCheckOut] = useState("")
     const [totalPrice, setTotalPrice] = useState(0)
-    let {handleBooking} = useContext(bookingDataContext)
+    let {handleBooking, cancelBooking} = useContext(bookingDataContext)
 
     useEffect(() => {
       if (updatepopup && cardDetails) {
@@ -134,6 +134,23 @@ function ViewCard() {
       }
     }
 
+    const handleCancelBooking = async () => {
+      const booking = userData?.bookings?.find(b => b.listing?._id === cardDetails?._id);
+      if (booking && window.confirm("Are you sure you want to cancel this booking?")) {
+        try {
+          await cancelBooking(booking._id);
+          alert("Booking cancelled successfully!");
+          setCardDetails({ ...cardDetails, isBooked: false });
+          navigate("/");
+        } catch (error) {
+          console.error("Cancellation error:", error);
+          alert(error.response?.data?.message || "Failed to cancel booking.");
+        }
+      }
+    };
+
+    const userBooking = userData?.bookings?.find(b => b.listing?._id === cardDetails?._id);
+
   return (
       <div className="min-h-screen bg-gray-50 flex justify-center pt-10">
         <div className="w-[1005px] min-h-[635px] bg-white rounded-xl border border-gray-200 shadow-sm p-8 relative flex flex-col">
@@ -195,6 +212,10 @@ function ViewCard() {
                   Edit Listing
                 </button>
               </>
+            ) : userBooking ? (
+              <button className="bg-yellow-500 text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-yellow-600 cursor-pointer" onClick={handleCancelBooking}>
+                Cancel Booking
+              </button>
             ) : cardDetails?.isBooked ? (
               <button className="bg-gray-400 text-white font-bold py-3 px-8 rounded-lg cursor-not-allowed" disabled>
                 Booked

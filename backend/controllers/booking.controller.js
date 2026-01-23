@@ -50,3 +50,34 @@ export const createBooking = async (req, res) => {
         res.status(500).json({ message: `Error creating booking: ${error.message}` });
     }
 };
+
+export const cancelBooking = async (req, res) => {  
+    try {
+        const { id } = req.params; // This is the booking ID
+        const userId = req.userId;
+
+        // 1. Find the booking
+        const booking = await Booking.findById(id);
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        // 2. Authorize: only the guest who made the booking can cancel it
+        if (booking.guest.toString() !== userId) {
+            return res.status(403).json({ message: "You are not authorized to cancel this booking." });
+        }
+
+        // 3. Update the associated listing to be available again
+        await Listing.findByIdAndUpdate(booking.listing, { isBooked: false });
+
+        // 4. Remove booking from user's bookings array
+        await User.findByIdAndUpdate(userId, { $pull: { bookings: id } });
+
+        // 5. Delete the booking document itself
+        await Booking.findByIdAndDelete(id);
+
+        return res.status(200).json({ message: "Booking cancelled successfully" });
+    } catch(error) {
+        res.status(500).json({ message: `Error cancelling booking: ${error.message}` });
+    }
+};
