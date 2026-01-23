@@ -52,22 +52,11 @@ function Nav() {
     setCate(category);
     // Handle special case for 'Trending' - show all listings
     if (category === 'Trending') {
-      // Reset to show all listings
-      if (newListData && newListData.length > 0) {
-        setNewListData(newListData);
-      } else if (listingData && listingData.length > 0) {
-        setNewListData(listingData);
-      }
+      setNewListData(listingData);
     } else {
       // Filter listings by category
-      if (newListData && newListData.length > 0) {
-        const filteredListings = newListData.filter((list) => list.category === category);
-        setNewListData(filteredListings);
-      } else if (listingData && listingData.length > 0) {
-        // Fallback to original listingData if newListData is not available
-        const filteredListings = listingData.filter((list) => list.category === category);
-        setNewListData(filteredListings);
-      }
+      const filteredListings = listingData.filter((list) => list.category === category);
+      setNewListData(filteredListings);
     }
   };
 

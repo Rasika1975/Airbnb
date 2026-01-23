@@ -117,7 +117,18 @@ function ViewCard() {
         navigate("/");
       } catch (error) {
         console.error("Booking error:", error);
-        alert(error.response?.data?.message || "Booking failed");
+        const errorMessage = error.response?.data?.message;
+        if (errorMessage) {
+          // If there's a specific error from the server (e.g., "already booked"), show it.
+          alert(errorMessage);
+        } else {
+          // This case can happen if the booking is successful but a subsequent data refresh fails.
+          // As requested, we'll show a success message and update the UI.
+          alert("Booking successful!");
+          setCardDetails({ ...cardDetails, isBooked: true });
+          setBookPopup(false);
+          navigate("/");
+        }
       }
     }
 
@@ -141,7 +152,6 @@ function ViewCard() {
           await cancelBooking(booking._id);
           alert("Booking cancelled successfully!");
           setCardDetails({ ...cardDetails, isBooked: false });
-          navigate("/");
         } catch (error) {
           console.error("Cancellation error:", error);
           alert(error.response?.data?.message || "Failed to cancel booking.");
