@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
 
 const uploadCloudinary = async (filepath) =>{
     cloudinary.config({
