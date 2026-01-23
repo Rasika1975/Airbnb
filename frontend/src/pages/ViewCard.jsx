@@ -9,7 +9,7 @@ import { bookingDataContext } from '../Context/BookingContext';
 
 function ViewCard() {
     let navigate = useNavigate()
-    let { cardDetails, 
+    let { cardDetails, setCardDetails,
           title, setTitle,
           description, setDescription,
           rent, setRent,
@@ -111,6 +111,7 @@ function ViewCard() {
           totalRent: totalPrice
         });
         
+        setCardDetails({ ...cardDetails, isBooked: true });
         alert("Booking successful!");
         setBookPopup(false);
         navigate("/");

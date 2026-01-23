@@ -22,7 +22,7 @@ export default function BookingContext({children}) {
             let result = await axios.post(`${serverUrl}/api/booking/create/${id}`, bookingDetails, {withCredentials:true})
             
             await refreshUser()
-            // await getListing() // Optional: refresh listings if needed
+            await getListing()
             setBookingData(result.data)
             return result.data;
         }
