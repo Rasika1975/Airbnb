@@ -16,7 +16,7 @@ app.use(express.json())
 
 app.use(cookieParser())
 app.use(cors({
-  origin:"https://airbnb-s0tp.onrender.com",
+  origin:"https://stayhub-demo.onrender.com",
   credentials:true
 }))
 const port = process.env.PORT || 5000;
